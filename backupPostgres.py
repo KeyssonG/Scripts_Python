@@ -134,17 +134,33 @@ def get_database_config():
     print("=" * 60)
     print("CONFIGURAÇÃO DO BANCO POSTGRESQL")
     print("=" * 60)
+    print("Por segurança, todos os dados serão ocultados durante a digitação")
+    print("=" * 60)
     
-    host = input("Host do banco (padrão: localhost): ").strip() or 'localhost'
-    port = input("Porta do banco (padrão: 5432): ").strip() or '5432'
-    database = input("Nome do banco de dados: ").strip()
-    username = input("Nome de usuário: ").strip()
+    # Host do banco
+    host_input = getpass.getpass("Host do banco (pressione Enter para localhost): ").strip()
+    host = host_input if host_input else 'localhost'
     
-    # Usa getpass para ocultar a senha
+    # Porta do banco
+    port_input = getpass.getpass("Porta do banco (pressione Enter para 5432): ").strip()
+    port = port_input if port_input else '5432'
+    
+    # Nome do banco de dados (obrigatório)
+    database = getpass.getpass("Nome do banco de dados: ").strip()
+    
+    # Nome de usuário (obrigatório)
+    username = getpass.getpass("Nome de usuário: ").strip()
+    
+    # Senha
     password = getpass.getpass("Senha: ")
     
     if not database or not username:
         print("Nome do banco e usuário são obrigatórios!")
+        return None
+    
+    confirm = input("\nConfirmar configuração? (s/N): ").strip().lower()
+    if confirm not in ['s', 'sim', 'y', 'yes']:
+        print("Configuração cancelada!")
         return None
     
     return {
@@ -171,9 +187,9 @@ def show_menu():
             if choice in [1, 2, 3]:
                 return choice
             else:
-                print("❌ Opção inválida! Digite 1, 2 ou 3.")
+                print("Opção inválida! Digite 1, 2 ou 3.")
         except ValueError:
-            print("❌ Digite apenas números!")
+            print("Digite apenas números!")
 
 def show_schedule_menu():
     """Mostra o menu de agendamento"""
@@ -186,7 +202,7 @@ def show_schedule_menu():
     print("4.Backup a cada 2 dias às 02:00")
     print("5.Backup a cada 30 minutos (teste)")
     print("6.Personalizar horário")
-    print("7. ⬅ Voltar ao menu principal")
+    print("7. <- Voltar ao menu principal")
     print("=" * 60)
     
     while True:
@@ -271,7 +287,7 @@ def main():
         
         if choice == 1:
             # Backup único
-            print("\n🚀 Iniciando backup único...")
+            print("\nIniciando backup único...")
             try:
                 backup = PostgreSQLBackup(**backup_config)
                 success = backup.create_backup()
