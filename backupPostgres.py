@@ -412,3 +412,4 @@ def run_scheduled_backup(backup_config, schedule_config):
 
 if __name__ == "__main__":
     main()
+    
